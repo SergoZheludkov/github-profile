@@ -40,7 +40,7 @@ export const OctokitProvider = ({ children }: OctokitProviderProps) => {
 
   useEffect(() => {
     if (!token) return;
-    setOctokit(new Octokit({auth: token}))
+    setOctokit(new Octokit({ auth: token }))
   }, [token])
 
   useEffect(() => {

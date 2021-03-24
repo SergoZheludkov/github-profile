@@ -11,6 +11,7 @@ interface Repo {
 export type ReposProviderContext = {
   repos: Repo[];
   error: string;
+  update: () => void;
 };
 
 type ReposProviderProps = {
@@ -24,27 +25,31 @@ export const ReposProvider = ({ children }: ReposProviderProps) => {
   const [error, setError] = useState('');
   const { user: { username }, logout, octokit } = useOctokit();
 
+  const update = async () => {
+    if (!octokit) return;
+    try {
+      const { data } = await octokit.request(`/users/${username}/repos`);
+      const _repos = data.map((elem: any) => ({
+        name: elem.name,
+        language: elem.language,
+        stars: elem.stargazers_count
+      }));
+      setRepos(_repos);
+      console.log('success');
+    } catch (e) {
+      setError(getError(e.status))
+    }
+  }
+
   useEffect(() => {
-    if (!logout || !octokit) return;
-    (async () => {
-      try {
-        const { data } = await octokit.request(`/users/${username}/repos`);
-        const _repos = data.map((elem: any) => ({
-          name: elem.name,
-          language: elem.language,
-          stars: elem.stargazers_count
-        }));
-        setRepos(_repos);
-      } catch (e) {
-        setError(getError(e.status))
-      }
-    })();
+    if (!logout) return;
+    update();
   }, [logout, octokit])
 
 
   return (
     <ReposContext.Provider
-      value={{ repos, error }}
+      value={{ repos, error, update }}
     >
       {children}
     </ReposContext.Provider>

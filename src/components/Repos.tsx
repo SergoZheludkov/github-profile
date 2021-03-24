@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
@@ -8,10 +8,16 @@ import Table from 'react-bootstrap/Table';
 
 import { useRepos } from "../contexts/ReposProvider";
 
+const updateTime = 10000;
 
 export const Repos: React.FC = () => {
   const history = useHistory();
-  const { repos } = useRepos();
+  const { repos, error, update } = useRepos();
+
+  useEffect(() => {
+    const timerId = setTimeout(() => update(), updateTime);
+    return () => clearTimeout(timerId);
+  });
 
   const renderTable = () => (
     <Row className="w-50 align-items-center justify-content-between">
