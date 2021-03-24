@@ -7,15 +7,13 @@ import Row from 'react-bootstrap/Row';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
+import { useOctokit } from "../contexts/OctokitProvider";
 
 export const Profile: React.FC = () => {
   const history = useHistory();
-  const initialValues = {
-    name: '',
-    blog: '',
-    bio: '',
-  };
+  const { user: { name, blog, bio }, logout } = useOctokit();
 
+  const initialValues = { name, blog, bio };
   const formik = useFormik({
     initialValues,
     onSubmit: (values) => console.log(values),
@@ -40,7 +38,13 @@ export const Profile: React.FC = () => {
               your repos
             </Button>
           </Row>
-          <Button variant="danger" size="lg">Logout</Button>
+          <Button
+            variant="danger"
+            size="lg"
+            onClick={logout}
+          >
+            Logout
+          </Button>
         </Row>
         <Form className="w-50" onSubmit={onSubmit}>
           <Form.Group>
@@ -50,6 +54,7 @@ export const Profile: React.FC = () => {
               name="name"
               type="text"
               placeholder="Enter name"
+              value={formik.values.name}
               onChange={formik.handleChange}
             />
           </Form.Group>
@@ -60,6 +65,7 @@ export const Profile: React.FC = () => {
               name="blog"
               type="text"
               placeholder="Enter text"
+              value={formik.values.blog}
               onChange={formik.handleChange}
             />
           </Form.Group>
@@ -71,6 +77,7 @@ export const Profile: React.FC = () => {
               as="textarea"
               rows={4}
               placeholder="Enter your bio"
+              value={formik.values.bio}
               onChange={formik.handleChange}
             />
           </Form.Group>

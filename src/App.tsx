@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Switch, Route, Redirect, useHistory } from "react-router-dom";
+import React  from 'react';
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+
+import { useOctokit } from "./contexts/OctokitProvider";
 import { Login } from './components/Login';
 import { Profile } from './components/Profile';
 import { Repos } from './components/Repos';
 import { NotFound } from "./components/NotFound";
+import { ReposProvider } from "./contexts/ReposProvider";
 
 export const App: React.FC = () => {
-  const [loggedIn, setLogged] = useState(true);
-  const history = useHistory();
-
-  useEffect(() => {
-    if (loggedIn) return;
-    history.push('/')
-  }, [loggedIn])
+  const { user: { loggedIn } } = useOctokit();
 
   if (!loggedIn) return <Login />;
 
@@ -22,8 +19,14 @@ export const App: React.FC = () => {
         <Route exact path="/">
           <Redirect to="/profile" />
         </Route>
-        <Route path="/profile" render={() => <Profile />} />
-        <Route path="/repos" render={() => <Repos />} />
+        <Route path="/profile">
+          <Profile />
+        </Route>
+        <Route path="/repos">
+          <ReposProvider>
+            <Repos />
+          </ReposProvider>
+        </Route>
         <Route path="*" render={() => <NotFound />} />
       </Switch>
     </Router>
