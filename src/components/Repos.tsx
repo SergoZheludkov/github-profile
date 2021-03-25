@@ -32,7 +32,7 @@ export const Repos: React.FC = () => {
         </thead>
         <tbody>
           {repos.map(({ name, language, stars }, index ) => (
-            <tr key={index}>
+            <tr key={name}>
               <th>{index + 1}</th>
               <th>{name}</th>
               <th>{language}</th>

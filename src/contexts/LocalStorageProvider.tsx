@@ -31,7 +31,7 @@ export const LocalStorageProvider = ({ children }: LocalStorageProviderProps) =>
     return Object.fromEntries(localStorageEntries);
   });
 
-  function setItem(key: string, value: any) {
+  const setItem = (key: string, value: any) => {
     setData((data) => ({
       ...data,
       [key]: value,
