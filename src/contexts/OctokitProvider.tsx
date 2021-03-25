@@ -20,6 +20,7 @@ type OctokitProviderContext = {
   error: string;
   logout: () => void;
   update: (values: UserUpdateData) => void;
+  successUpdate: boolean;
 };
 
 export type OctokitProviderProps = {
@@ -41,6 +42,10 @@ export const OctokitProvider = ({ children }: OctokitProviderProps) => {
   const { token, removeToken } = useLocalStorage();
   const [user, setUser] = useState<UserData>(userInit);
   const [error, setError] = useState<string>('');
+  const [successUpdate, setSuccess] = useState(false);
+
+  const clearError = () => setTimeout(() => setError(''), 2000);
+  const clearSuccess = () => setTimeout(() => setSuccess(false), 2000);
 
   useEffect(() => {
     if (!token) return;
@@ -60,7 +65,8 @@ export const OctokitProvider = ({ children }: OctokitProviderProps) => {
           loggedIn: true,
         });
       } catch (e) {
-        setError(getError(e.status))
+        setError(getError(e.status));
+        clearError();
       }
     })();
   }, [octokit])
@@ -70,15 +76,30 @@ export const OctokitProvider = ({ children }: OctokitProviderProps) => {
     removeToken();
   }
 
-  const update = async (values: UserUpdateData) => {
+  const updateUserData = async (values: UserUpdateData) => {
     if (!octokit) return;
-    const res = await octokit.users.updateAuthenticated({ ...values });
-    console.log(res)
+    try {
+      const res = await octokit.users.updateAuthenticated({ ...values });
+      if (res.status === 200) {
+        setSuccess(true)
+        clearSuccess();
+      }
+    } catch (e) {
+      setError(getError(e.status))
+      clearError();
+    }
   };
 
   return (
     <OctokitContext.Provider
-      value={{ octokit, user, error, logout, update }}
+      value={{
+        octokit,
+        user,
+        error,
+        logout,
+        update: updateUserData,
+        successUpdate,
+      }}
     >
       {children}
     </OctokitContext.Provider>

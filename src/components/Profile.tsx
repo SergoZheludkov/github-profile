@@ -11,7 +11,7 @@ import { useOctokit } from "../contexts/OctokitProvider";
 
 export const Profile: React.FC = () => {
   const history = useHistory();
-  const { user: { name, blog, bio }, logout, update } = useOctokit();
+  const { user: { name, blog, bio }, logout, update, successUpdate, error } = useOctokit();
 
   const initialValues = { name, blog, bio };
   const formik = useFormik({
@@ -81,9 +81,13 @@ export const Profile: React.FC = () => {
               onChange={formik.handleChange}
             />
           </Form.Group>
-          <Button variant="primary" type="submit">
-            Submit
-          </Button>
+          <Row className="flex-nowrap align-items-center justify-content-between mx-0">
+            <Button variant="primary" type="submit">
+              Submit
+            </Button>
+            {successUpdate && <div className="text-success">Success Update</div>}
+            {error && <div className="text-danger">{error}</div>}
+          </Row>
         </Form>
       </Row>
     </Container>

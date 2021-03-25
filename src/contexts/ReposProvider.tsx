@@ -35,7 +35,6 @@ export const ReposProvider = ({ children }: ReposProviderProps) => {
         stars: elem.stargazers_count
       }));
       setRepos(_repos);
-      console.log('success');
     } catch (e) {
       setError(getError(e.status))
     }
