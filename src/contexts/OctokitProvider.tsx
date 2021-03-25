@@ -1,21 +1,25 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import { Octokit  } from '@octokit/rest';
 import { getError } from '../utilits/helpers';
+import { useLocalStorage } from "./LocalStorageProvider";
 
-type UserData = {
-  username: string;
+interface UserUpdateData {
   name: string;
   bio: string;
   blog: string;
+}
+
+interface UserData extends UserUpdateData {
+  username: string;
   loggedIn: boolean;
 }
 
 type OctokitProviderContext = {
   octokit: Octokit | null;
-  setToken: (token: string) => void;
   user: UserData;
   error: string;
   logout: () => void;
+  update: (values: UserUpdateData) => void;
 };
 
 export type OctokitProviderProps = {
@@ -34,7 +38,7 @@ const userInit = {
 
 export const OctokitProvider = ({ children }: OctokitProviderProps) => {
   const [octokit, setOctokit] = useState<Octokit | null>(null);
-  const [token, setToken] = useState('');
+  const { token, removeToken } = useLocalStorage();
   const [user, setUser] = useState<UserData>(userInit);
   const [error, setError] = useState<string>('');
 
@@ -63,12 +67,18 @@ export const OctokitProvider = ({ children }: OctokitProviderProps) => {
 
   const logout = () => {
     setUser(userInit);
-    setToken('')
+    removeToken();
   }
+
+  const update = async (values: UserUpdateData) => {
+    if (!octokit) return;
+    const res = await octokit.users.updateAuthenticated({ ...values });
+    console.log(res)
+  };
 
   return (
     <OctokitContext.Provider
-      value={{ setToken, octokit, user, error, logout }}
+      value={{ octokit, user, error, logout, update }}
     >
       {children}
     </OctokitContext.Provider>

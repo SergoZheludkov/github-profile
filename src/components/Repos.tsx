@@ -44,6 +44,12 @@ export const Repos: React.FC = () => {
     </Row>
   );
 
+  const getError = () => (
+    <Row className="w-50 align-items-center justify-content-center text-danger">
+      <h1>{error}</h1>
+    </Row>
+  );
+
   return (
     <Container fluid="md" className="h-100">
       <Row className="h-100 flex-column flex-nowrap align-items-center justify-content-start">
@@ -54,6 +60,7 @@ export const Repos: React.FC = () => {
           </Button>
         </Row>
         {repos.length > 0 && renderTable()}
+        {error && getError()}
       </Row>
     </Container>
   );

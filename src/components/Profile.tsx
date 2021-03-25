@@ -11,12 +11,12 @@ import { useOctokit } from "../contexts/OctokitProvider";
 
 export const Profile: React.FC = () => {
   const history = useHistory();
-  const { user: { name, blog, bio }, logout } = useOctokit();
+  const { user: { name, blog, bio }, logout, update } = useOctokit();
 
   const initialValues = { name, blog, bio };
   const formik = useFormik({
     initialValues,
-    onSubmit: (values) => console.log(values),
+    onSubmit: (values) => update(values),
   })
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {

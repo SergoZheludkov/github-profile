@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 
 import { App } from './App';
 import { OctokitProvider } from "./contexts/OctokitProvider";
+import { LocalStorageProvider } from "./contexts/LocalStorageProvider";
 
 import 'regenerator-runtime';
 
@@ -11,11 +12,11 @@ import './styles.less';
 
 render(
   <StrictMode>
-    <OctokitProvider>
-      {/*<UserProvider>*/}
+    <LocalStorageProvider>
+      <OctokitProvider>
         <App />
-      {/*</UserProvider>*/}
-    </OctokitProvider>
+      </OctokitProvider>
+    </LocalStorageProvider>
   </StrictMode>,
   document.querySelector('#root'),
 );

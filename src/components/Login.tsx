@@ -7,10 +7,12 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 import { useOctokit } from "../contexts/OctokitProvider";
+import { useLocalStorage } from "../contexts/LocalStorageProvider";
 
 export const Login: React.FC = () => {
   const inputELem = useRef<HTMLInputElement>(null);
-  const { setToken, error } = useOctokit();
+  const { error } = useOctokit();
+  const { setToken } = useLocalStorage();
 
   useEffect(() => {
     if (!inputELem.current) return;
